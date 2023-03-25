@@ -108,4 +108,12 @@ export const Node = styled.div.attrs((props) => ({
     width: 36px;
     color: #0f62fe;
   }
+  .add-node {
+    cursor: pointer;
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    height: 0;
+    font-size: 20px;
+  }
 `;
