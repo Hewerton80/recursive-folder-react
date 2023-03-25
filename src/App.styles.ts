@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import classnames from 'classnames'
+import classnames from "classnames";
 
 export const Container = styled.div`
   display: flex;
@@ -58,8 +58,8 @@ export const NodeChildren = styled.div.attrs(() => ({
 `;
 
 export const Node = styled.div.attrs((props) => ({
-  className: classnames("node",props?.className),
-  ...props
+  className: classnames("node", props?.className),
+  ...props,
 }))`
   display: flex;
   background-color: #fff;
@@ -93,6 +93,9 @@ export const Node = styled.div.attrs((props) => ({
       height: 9px;
       padding: 10px;
       width: 0;
+    }
+    & > span p {
+      transform: rotate(90deg);
     }
   }
   .node-toggle {
