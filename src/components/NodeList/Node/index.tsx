@@ -6,36 +6,53 @@ import { generateId } from "../../../util/getRandom";
 
 interface INodeProps {
   dynamicNodeData: IDynamicNode;
+
+  /* callback enviar as alterações do node */
   onChangeNodeChildren?: (nodeChanged: IDynamicNode) => void;
 }
 
-export default function Node({ dynamicNodeData, onChangeNodeChildren }: INodeProps) {
-
+export default function Node({
+  dynamicNodeData,
+  onChangeNodeChildren,
+}: INodeProps) {
   const [dynamicNode, setDynamicNode] = useState<IDynamicNode>(dynamicNodeData);
 
   /* Toda vez que tiver uma alteração no filho vai cair aqui e atualizar o filho desse node  */
-  const handleNodeChanged = useCallback((nodeChanged: IDynamicNode) => {
-    setDynamicNode(({...currentDynamicNode}) => {
-      const indexNodeChildChanged = currentDynamicNode?.nodes?.findIndex(child => child.id === nodeChanged.id)
-      currentDynamicNode.nodes![indexNodeChildChanged!] = nodeChanged
-      return currentDynamicNode
-    } )
-  }, [onChangeNodeChildren])
+  const handleNodeChanged = useCallback(
+    (nodeChanged: IDynamicNode) => {
+      setDynamicNode(({ ...currentDynamicNode }) => {
+        const indexNodeChildChanged = currentDynamicNode?.nodes?.findIndex(
+          (child) => child.id === nodeChanged.id
+        );
+        currentDynamicNode.nodes![indexNodeChildChanged!] = nodeChanged;
+        return currentDynamicNode;
+      });
+    },
+    []
+  );
 
   const HandleGetNodes = useCallback((nodesArg: IDynamicNode[]) => {
-    return nodesArg.map((nodeArg) => <Node dynamicNodeData={nodeArg} key={nodeArg.id} onChangeNodeChildren={handleNodeChanged} />);
+    return nodesArg.map((nodeArg) => (
+      <Node
+        dynamicNodeData={nodeArg}
+        key={nodeArg.id}
+        onChangeNodeChildren={handleNodeChanged}
+      />
+    ));
   }, []);
 
   const handleAddChildNode = useCallback(() => {
     setDynamicNode(({ ...currentDynamicNode }) => {
-      currentDynamicNode.expanded = true
-      if(!currentDynamicNode?.nodes?.length){
-        currentDynamicNode.nodes = []
+      currentDynamicNode.expanded = true;
+      if (!currentDynamicNode?.nodes?.length) {
+        currentDynamicNode.nodes = [];
       }
-      currentDynamicNode.nodes  = [...currentDynamicNode.nodes, { id: `__${generateId()}__`, expanded: false } ]
-      return currentDynamicNode
-    })
-
+      currentDynamicNode.nodes = [
+        ...currentDynamicNode.nodes,
+        { id: `__${generateId()}__`, expanded: false },
+      ];
+      return currentDynamicNode;
+    });
   }, []);
 
   const NodeElement = useMemo(() => {
@@ -51,7 +68,8 @@ export default function Node({ dynamicNodeData, onChangeNodeChildren }: INodePro
                 <span
                   onClick={() =>
                     setDynamicNode(({ ...currentDynamicNode }) => {
-                      currentDynamicNode.expanded = !currentDynamicNode?.expanded;
+                      currentDynamicNode.expanded =
+                        !currentDynamicNode?.expanded;
                       return currentDynamicNode;
                     })
                   }
@@ -78,8 +96,8 @@ export default function Node({ dynamicNodeData, onChangeNodeChildren }: INodePro
 
   /* Toda vez que esse node sofre alguma alteração vai enviar seus dados para o pai  */
   useEffect(() => {
-    onChangeNodeChildren?.(dynamicNode)
-  }, [onChangeNodeChildren, dynamicNode])
+    onChangeNodeChildren?.(dynamicNode);
+  }, [onChangeNodeChildren, dynamicNode]);
 
   return NodeElement;
 }

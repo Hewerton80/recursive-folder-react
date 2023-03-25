@@ -6,15 +6,20 @@ import * as Styled from "../../App.styles";
 
 interface INodeListProps {
   dynamicNodes: IDynamicNode[];
+
+  // callback para monitorar todas as alterações na lista de nodes
+  onChangeList?: (dynamicNodeList: IDynamicNode[]) => void;
 }
 
-export default function NodeList({ dynamicNodes }: INodeListProps) {
+export default function NodeList({
+  dynamicNodes,
+  onChangeList,
+}: INodeListProps) {
   const [dynamicNodeList, setDynamicNodeList] = useState<IDynamicNode[]>([]);
 
-  useEffect(
-    () => console.log("dynamicNodeList", dynamicNodeList),
-    [dynamicNodeList]
-  );
+  useEffect(() => {
+    onChangeList?.(dynamicNodeList);
+  }, [dynamicNodeList, onChangeList]);
 
   const onChangeNodeChildren = useCallback((nodeChanged: IDynamicNode) => {
     setDynamicNodeList(([...currentDynamicNodeList]) => {

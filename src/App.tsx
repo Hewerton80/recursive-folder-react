@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { GlobalStyle } from "./global";
 import * as Styled from "./App.styles";
 import { generateId } from "./util/getRandom";
-import Node from './components/NodeList/Node'
+import Node from "./components/NodeList/Node";
 import NodeList from "./components/NodeList";
 
 interface IDynamicNode {
@@ -40,11 +40,16 @@ const nodes: IDynamicNode[] = [
 function App() {
   const [dynamicNodes, setDynamicNodes] = useState<IDynamicNode[]>([]);
 
+  /* callback para monitorar a lista de nodes */
+  const onChangeList = useCallback((dynamicNodeList: IDynamicNode[]) => {
+    console.log("dynamicNodeList", dynamicNodeList);
+  }, []);
+
   useEffect(() => {
     setDynamicNodes(nodes);
   }, []);
 
-  return (<NodeList dynamicNodes={dynamicNodes} />);
+  return <NodeList dynamicNodes={dynamicNodes} onChangeList={onChangeList} />;
 }
 
 export default App;
