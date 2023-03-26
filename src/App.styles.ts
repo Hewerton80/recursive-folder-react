@@ -107,6 +107,10 @@ export const Node = styled.div.attrs((props) => ({
     height: 100%;
     width: 36px;
     color: #0f62fe;
+    font-weight: 800;
+  }
+  .node-toggle.node-selected {
+    border-right: 1px solid #0f62fe;
   }
   .content {
     padding: 10px;
@@ -140,7 +144,7 @@ export const Node = styled.div.attrs((props) => ({
     gap: 4px;
     margin-top: 10px;
   }
-  .add-node, .remove-node {
+  .info-node, .add-node, .remove-node {
     background-color: #f2f2f2;
     background-color: #f2f2f2;
     width: 30px;
@@ -152,8 +156,15 @@ export const Node = styled.div.attrs((props) => ({
     border-radius: 50%;
     transition: ease 0.5s;
   }
+  .info-node.node-selected {
+    border: 1px solid #0f62fe;
+    color: #0f62fe;
+  }
   .add-node:hover, .remove-node:hover {
     background-color: #999;
     opacity: 0.5;
+  }
+  &.node-selected  {
+   border: 1px solid #0f62fe;
   }
 `;

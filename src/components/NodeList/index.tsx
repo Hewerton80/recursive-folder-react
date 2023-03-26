@@ -9,13 +9,16 @@ interface INodeListProps {
 
   // callback para monitorar todas as alterações na lista de nodes
   onChangeList?: (dynamicNodeList: IDynamicNode[]) => void;
+  onSelectedNode?: (nodeSelected: IDynamicNode) => void;
 }
 
 export default function NodeList({
   dynamicNodes,
   onChangeList,
+  onSelectedNode,
 }: INodeListProps) {
   const [dynamicNodeList, setDynamicNodeList] = useState<IDynamicNode[]>([]);
+  const [nodeSelected, setNodeSelected] = useState<IDynamicNode>()
 
   useEffect(() => {
     onChangeList?.(dynamicNodeList);
@@ -45,6 +48,17 @@ export default function NodeList({
     []
   );
 
+  const onSelectNode = useCallback((dynamicNode: IDynamicNode) => {
+    setNodeSelected((currentNodeSelected) => {
+      if(!currentNodeSelected || currentNodeSelected?.id !== dynamicNode.id){
+        onSelectedNode?.(dynamicNode)
+        return dynamicNode
+      }
+      onSelectedNode?.(undefined!)
+      return undefined
+    })
+  }, [onSelectedNode])
+
   const nodeMemp = useMemo(() => {
     return dynamicNodeList?.map((node) => (
       <Node
@@ -52,9 +66,11 @@ export default function NodeList({
         key={node.id}
         onChangeNodeChild={onChangeNodeChild}
         onRequestRemoveChild={onRequestRemoveChild}
+        onSelectNode={onSelectNode}
+        nodeSelected={nodeSelected}
       />
     ));
-  }, [dynamicNodeList, onRequestRemoveChild, onChangeNodeChild]);
+  }, [dynamicNodeList, nodeSelected, onRequestRemoveChild, onChangeNodeChild]);
 
   useEffect(() => {
     setDynamicNodeList(dynamicNodes);
