@@ -108,12 +108,52 @@ export const Node = styled.div.attrs((props) => ({
     width: 36px;
     color: #0f62fe;
   }
-  .add-node {
+  .content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+  }
+  .content .title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .content .sub-title {
+    color: #6b6b6b;
+    font-size: 12px;
+    margin-bottom: auto;
+
+  }
+  .content .description {
+    color: #6b6b6b;
+    font-size: 12px;
+    margin-bottom: auto;
+
+  }
+  .actions {
     cursor: pointer;
     position: absolute;
     top: -5px;
     right: 5px;
-    height: 0;
     font-size: 20px;
+    display: flex;
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .add-node, .remove-node {
+    background-color: #f2f2f2;
+    background-color: #f2f2f2;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 8px;
+    border-radius: 50%;
+    transition: ease 0.5s;
+  }
+  .add-node:hover, .remove-node:hover {
+    background-color: #999;
+    opacity: 0.5;
   }
 `;

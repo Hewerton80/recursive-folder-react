@@ -1,41 +1,8 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { GlobalStyle } from "./global";
-import * as Styled from "./App.styles";
-import { generateId } from "./util/getRandom";
-import Node from "./components/NodeList/Node";
+import { useState, useEffect, useCallback } from "react";
 import NodeList from "./components/NodeList";
+import { IDynamicNode } from "./types/IDynamicNode";
+import { mockDynamicNodes } from './mockDynamicNodes'
 
-interface IDynamicNode {
-  id: string;
-  nodes?: IDynamicNode[];
-  expanded?: boolean;
-}
-
-const getRandomNode = () => ({
-  id: generateId(),
-  expanded: false,
-});
-
-const nodes: IDynamicNode[] = [
-  getRandomNode(),
-  getRandomNode(),
-  {
-    ...getRandomNode(),
-    nodes: [
-      getRandomNode(),
-      {
-        ...getRandomNode(),
-        nodes: [
-          {
-            ...getRandomNode(),
-            nodes: [{ ...getRandomNode(), nodes: [getRandomNode()] }],
-          },
-        ],
-      },
-    ],
-  },
-  getRandomNode(),
-];
 
 function App() {
   const [dynamicNodes, setDynamicNodes] = useState<IDynamicNode[]>([]);
@@ -46,7 +13,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setDynamicNodes(nodes);
+    setDynamicNodes(mockDynamicNodes);
   }, []);
 
   return <NodeList dynamicNodes={dynamicNodes} onChangeList={onChangeList} />;

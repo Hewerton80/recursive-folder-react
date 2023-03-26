@@ -21,7 +21,7 @@ export default function NodeList({
     onChangeList?.(dynamicNodeList);
   }, [dynamicNodeList, onChangeList]);
 
-  const onChangeNodeChildren = useCallback((nodeChanged: IDynamicNode) => {
+  const onChangeNodeChild = useCallback((nodeChanged: IDynamicNode) => {
     setDynamicNodeList(([...currentDynamicNodeList]) => {
       const indexChildChanged = currentDynamicNodeList?.findIndex(
         (child) => child.id === nodeChanged.id
@@ -31,15 +31,30 @@ export default function NodeList({
     });
   }, []);
 
+  const onRequestRemoveChild = useCallback(
+    (nodeRequestToRemove: IDynamicNode) => {
+      setDynamicNodeList(([ ...currentDynamicNodeList ]) => {
+        if (currentDynamicNodeList?.length > 0) {
+          currentDynamicNodeList = currentDynamicNodeList?.filter(
+            (child) => child.id !== nodeRequestToRemove.id
+          );
+        }
+        return currentDynamicNodeList;
+      });
+    },
+    []
+  );
+
   const nodeMemp = useMemo(() => {
     return dynamicNodeList?.map((node) => (
       <Node
         dynamicNodeData={node}
         key={node.id}
-        onChangeNodeChildren={onChangeNodeChildren}
+        onChangeNodeChild={onChangeNodeChild}
+        onRequestRemoveChild={onRequestRemoveChild}
       />
     ));
-  }, [dynamicNodeList]);
+  }, [dynamicNodeList, onRequestRemoveChild, onChangeNodeChild]);
 
   useEffect(() => {
     setDynamicNodeList(dynamicNodes);
