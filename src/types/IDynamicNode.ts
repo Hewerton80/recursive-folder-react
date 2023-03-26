@@ -1,5 +1,8 @@
 export interface IDynamicNode {
     id: string;
-    nodes?: IDynamicNode[];
+    title?: string;
+    subTitle?: string;
+    description?: string;
     expanded?: boolean;
+    nodes?: IDynamicNode[];
 }
