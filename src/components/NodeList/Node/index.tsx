@@ -6,17 +6,20 @@ import { generateId } from "../../../util/getRandom";
 
 interface INodeProps {
   dynamicNodeData: IDynamicNode;
-  enableAddNode?: boolean;
+  nodeSelected?: IDynamicNode
 
   /* callback enviar as alterações do node */
   onChangeNodeChild?: (nodeChanged: IDynamicNode) => void;
   onRequestRemoveChild?: (nodeRequestToRemove: IDynamicNode) => void;
+  onSelectNode?: (dynamicNode: IDynamicNode) => void;
 }
 
 export default function Node({
   dynamicNodeData,
+  nodeSelected,
   onChangeNodeChild,
   onRequestRemoveChild,
+  onSelectNode,
 }: INodeProps) {
   const [dynamicNode, setDynamicNode] = useState<IDynamicNode>(dynamicNodeData);
 
@@ -34,24 +37,31 @@ export default function Node({
   /* Toda vez que um node filho pedir para ser removido vai cair aqui para removelo deste node   */
   const handleNodeRemove = useCallback((nodeRequestToRemove: IDynamicNode) => {
     setDynamicNode(({ ...currentDynamicNode }) => {
-      currentDynamicNode.nodes = currentDynamicNode.nodes?.filter(child => child.id !== nodeRequestToRemove.id)
-      if(!currentDynamicNode?.nodes?.length){
-        currentDynamicNode.expanded = false
+      currentDynamicNode.nodes = currentDynamicNode.nodes?.filter(
+        (child) => child.id !== nodeRequestToRemove.id
+      );
+      if (!currentDynamicNode?.nodes?.length) {
+        currentDynamicNode.expanded = false;
       }
       return currentDynamicNode;
     });
   }, []);
 
-  const HandleGetNodes = useCallback((nodesArg: IDynamicNode[]) => {
-    return nodesArg.map((nodeArg) => (
-      <Node
-        dynamicNodeData={nodeArg}
-        key={nodeArg.id}
-        onChangeNodeChild={handleNodeChange}
-        onRequestRemoveChild={handleNodeRemove}
-      />
-    ));
-  }, [handleNodeChange, handleNodeRemove]);
+  const HandleGetNodes = useCallback(
+    (nodesArg: IDynamicNode[]) => {
+      return nodesArg.map((nodeArg) => (
+        <Node
+          dynamicNodeData={nodeArg}
+          key={nodeArg.id}
+          onChangeNodeChild={handleNodeChange}
+          onRequestRemoveChild={handleNodeRemove}
+          onSelectNode={handleSelectNode}
+          nodeSelected={nodeSelected}
+        />
+      ));
+    },
+    [handleNodeChange, handleNodeRemove, nodeSelected]
+  );
 
   const handleAddChildNode = useCallback(() => {
     setDynamicNode(({ ...currentDynamicNode }) => {
@@ -67,9 +77,19 @@ export default function Node({
     });
   }, []);
 
-  const handleRemoveChild = useCallback((node: IDynamicNode) => {
-    onRequestRemoveChild?.(node)
-  }, [onRequestRemoveChild])
+  const handleRemoveChild = useCallback(
+    (node: IDynamicNode) => {
+      onRequestRemoveChild?.(node);
+    },
+    [onRequestRemoveChild]
+  );
+
+  const handleSelectNode = useCallback(
+    (dynamicNode: IDynamicNode) => {
+      onSelectNode?.(dynamicNode);
+    },
+    [onSelectNode]
+  );
 
   const NodeElement = useMemo(() => {
     const hasChildren = Number(dynamicNode?.nodes?.length) > 0;
@@ -79,7 +99,12 @@ export default function Node({
       <Fragment key={String(dynamicNode.id)}>
         <Styled.NodeChild>
           <Styled.NodeContainer>
-            <Styled.Node className={classNames(isExpanded && "node--expanded")}>
+            <Styled.Node
+              className={classNames(
+                isExpanded && "node--expanded",
+                nodeSelected?.id === dynamicNode.id && "node-selected"
+              )}
+            >
               {hasChildren && (
                 <span
                   onClick={() =>
@@ -89,18 +114,28 @@ export default function Node({
                       return currentDynamicNode;
                     })
                   }
-                  className="node-toggle"
+                  className={`node-toggle ${nodeSelected?.id === dynamicNode.id && "node-selected"}`}
                 >
                   <p> {">"}</p>
                 </span>
               )}
+
               <div className="content">
                 <p className="title">{dynamicNode?.title}</p>
                 <p className="sub-title">{dynamicNode?.subTitle}</p>
                 <p className="description">{dynamicNode?.description}</p>
               </div>
               <div className="actions">
-                <span className="remove-node" onClick={() => handleRemoveChild(dynamicNode)}>
+                <span
+                  className={`info-node ${ nodeSelected?.id === dynamicNode.id && "node-selected"}`}
+                  onClick={() => handleSelectNode(dynamicNode)}
+                >
+                  !
+                </span>
+                <span
+                  className="remove-node"
+                  onClick={() => handleRemoveChild(dynamicNode)}
+                >
                   -
                 </span>
                 <span className="add-node" onClick={handleAddChildNode}>
@@ -117,7 +152,7 @@ export default function Node({
         </Styled.NodeChild>
       </Fragment>
     );
-  }, [dynamicNode, HandleGetNodes, handleAddChildNode]);
+  }, [dynamicNode, nodeSelected, HandleGetNodes, handleAddChildNode]);
 
   /* Toda vez que esse node sofre alguma alteração vai enviar seus dados para o pai  */
   useEffect(() => {
